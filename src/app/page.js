@@ -1,12 +1,13 @@
 import Banner from "@/components/Banner";
-import Facilities from "@/components/Facilities";
 import Image from "next/image";
+import FeaturedFacilities from "@/components/FeaturedFacilities";
 
 export default function Home() {
   return (
     <main>
       <Banner></Banner>
-      <Facilities></Facilities>
+     
+      <FeaturedFacilities></FeaturedFacilities>
     </main>
   );
 }
