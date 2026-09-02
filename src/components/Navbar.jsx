@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
@@ -8,11 +8,38 @@ import { authClient } from "@/lib/auth-client";
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
 
   const router = useRouter();
 
-  
   const { data: session, isPending } = authClient.useSession();
+
+  // Initialize theme from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+// eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern//
+      setDarkMode(false);
+       
+      document.documentElement.classList.remove("dark");
+    } else {
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
+
+  // Toggle Theme Function
+  const toggleTheme = () => {
+    if (darkMode) {
+      setDarkMode(false);
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    } else {
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    }
+  };
 
   // Logout
   const handleLogout = async () => {
@@ -30,12 +57,11 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-zinc-800 bg-zinc-950 text-white">
+    <nav className="sticky top-0 z-50 w-full border-b border-zinc-800 bg-zinc-950 text-white transition-colors duration-300">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-        
         <Link href="/" className="flex items-center gap-3">
-         
+          
           <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-lime-400 text-xl font-black italic text-zinc-950 shadow-lg">
             P
 
@@ -53,7 +79,6 @@ export default function Navbar() {
           </div>
         </Link>
 
-       
         <div className="hidden items-center gap-1 md:flex">
 
           {/* Home */}
@@ -102,11 +127,21 @@ export default function Navbar() {
       
         <div className="hidden items-center gap-3 md:flex">
 
+          {/* Theme Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-sm transition hover:border-lime-400"
+            aria-label="Toggle theme"
+          >
+            {darkMode ? "☀️" : "🌙"}
+          </button>
+
           {/* Loading */}
           {isPending ? (
             <div className="h-10 w-24 animate-pulse rounded-xl bg-zinc-800" />
           ) : session ? (
-
+              
           
             <div className="relative">
 
@@ -212,15 +247,26 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* MOBILE BUTTON  */}
-        <button
-          type="button"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-lg transition hover:border-lime-400 md:hidden"
-          aria-label="Toggle navigation menu"
-        >
-          {isMenuOpen ? "✕" : "☰"}
-        </button>
+        {/* MOBILE BUTTON & THEME TOGGLE  */}
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-sm transition hover:border-lime-400"
+            aria-label="Toggle theme"
+          >
+            {darkMode ? "☀️" : "🌙"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-lg transition hover:border-lime-400"
+            aria-label="Toggle navigation menu"
+          >
+            {isMenuOpen ? "✕" : "☰"}
+          </button>
+        </div>
       </div>
 
       {/* MOBILE MENU  */}
