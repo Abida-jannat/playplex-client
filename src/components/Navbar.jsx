@@ -11,7 +11,7 @@ export default function Navbar() {
 
   const router = useRouter();
 
-  // Better Auth session
+  
   const { data: session, isPending } = authClient.useSession();
 
   // Logout
@@ -33,9 +33,9 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-zinc-800 bg-zinc-950 text-white">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-        {/* ================= LOGO ================= */}
+        
         <Link href="/" className="flex items-center gap-3">
-          {/* Sporty P Logo */}
+         
           <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-lime-400 text-xl font-black italic text-zinc-950 shadow-lg">
             P
 
@@ -53,7 +53,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* ================= DESKTOP NAV ================= */}
+       
         <div className="hidden items-center gap-1 md:flex">
 
           {/* Home */}
@@ -99,7 +99,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* ================= RIGHT SIDE ================= */}
+      
         <div className="hidden items-center gap-3 md:flex">
 
           {/* Loading */}
@@ -107,7 +107,7 @@ export default function Navbar() {
             <div className="h-10 w-24 animate-pulse rounded-xl bg-zinc-800" />
           ) : session ? (
 
-            /* ================= PROFILE DROPDOWN ================= */
+          
             <div className="relative">
 
               <button
@@ -144,7 +144,6 @@ export default function Navbar() {
                 </span>
               </button>
 
-              {/* ================= DROPDOWN ================= */}
               {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-zinc-800 bg-zinc-950 p-2 shadow-2xl">
 
@@ -316,7 +315,7 @@ export default function Navbar() {
                 </>
               )}
 
-              {/* ================= MOBILE LOGIN ================= */}
+             
               {!isPending && !session && (
                 <Link
                   href="/login"
@@ -328,7 +327,7 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Mobile Branding */}
+        
             <div className="mt-6 border-t border-zinc-800 pt-5">
               <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-zinc-600">
                 Play. Book. Compete.

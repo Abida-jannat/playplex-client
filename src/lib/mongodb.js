@@ -13,7 +13,7 @@ let client;
 let clientPromise;
 
 if (process.env.NODE_ENV === "development") {
-  // Use global caching in development to prevent connection leaks during Hot Module Replacement (HMR)
+  
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri);
     global._mongoClientPromise = client.connect();

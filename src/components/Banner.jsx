@@ -12,7 +12,7 @@ export default function Banner() {
 
       <div className="relative mx-auto grid min-h-[560px] max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 md:grid-cols-2 lg:px-8">
 
-        {/* ================= LEFT CONTENT ================= */}
+
         <div className="max-w-xl">
 
           {/* Small Label */}
@@ -59,16 +59,16 @@ export default function Banner() {
           </div>
         </div>
 
-        {/* ================= RIGHT VISUAL ================= */}
+
         <div className="relative flex justify-center md:justify-end">
 
           {/* Main Card */}
           <div className="relative h-[380px] w-full max-w-[430px] overflow-hidden rounded-[2rem] border border-zinc-800 bg-zinc-900 shadow-2xl">
 
-            {/* Lime Gradient */}
+       
             <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-lime-400/20 blur-3xl" />
 
-            {/* Decorative Circle */}
+          
             <div className="absolute -bottom-24 -left-20 h-72 w-72 rounded-full border-[40px] border-lime-400/10" />
 
             {/* Sport Text */}
@@ -84,7 +84,7 @@ export default function Banner() {
               </h2>
             </div>
 
-            {/* Sport Icons / Cards */}
+          
             <div className="absolute bottom-7 left-7 right-7 grid grid-cols-3 gap-3">
 
               <div className="rounded-2xl border border-zinc-700 bg-zinc-800/80 p-4 text-center backdrop-blur">
