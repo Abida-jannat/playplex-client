@@ -102,7 +102,7 @@ export default function FacilityDetailsPage({ params: paramsPromise }) {
       toast.success("Booking request submitted successfully!");
 
       setTimeout(() => {
-        router.push("/bookings");
+        router.push("/my-booking");
         router.refresh();
       }, 1000);
     } catch (error) {

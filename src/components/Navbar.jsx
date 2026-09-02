@@ -76,7 +76,7 @@ export default function Navbar() {
           {!isPending && session && (
             <>
               <Link
-                href="/bookings"
+                href="/my-booking"
                 className="rounded-lg px-4 py-2 text-sm font-semibold text-zinc-300 transition-all duration-200 hover:bg-white/10 hover:text-lime-400"
               >
                 My Bookings
@@ -160,7 +160,7 @@ export default function Navbar() {
 
                   {/* My Bookings */}
                   <Link
-                    href="/bookings"
+                    href="/my-booking"
                     onClick={() => setIsProfileOpen(false)}
                     className="mt-2 block rounded-xl px-4 py-3 text-sm font-semibold text-zinc-300 transition hover:bg-zinc-900 hover:text-lime-400"
                   >
@@ -202,7 +202,7 @@ export default function Navbar() {
 
           ) : (
 
-            /* ================= LOGIN ================= */
+            /*  LOGIN  */
             <Link
               href="/login"
               className="inline-flex items-center justify-center rounded-xl bg-lime-400 px-6 py-2 text-sm font-bold text-zinc-950 shadow-lg shadow-lime-400/10 transition-all hover:bg-lime-300"
@@ -212,7 +212,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* ================= MOBILE BUTTON ================= */}
+        {/* MOBILE BUTTON  */}
         <button
           type="button"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -223,7 +223,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* ================= MOBILE MENU ================= */}
+      {/* MOBILE MENU  */}
       {isMenuOpen && (
         <div className="border-t border-zinc-800 bg-zinc-950 md:hidden">
           <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
@@ -248,7 +248,7 @@ export default function Navbar() {
                 All Facilities
               </Link>
 
-              {/* ================= MOBILE LOGGED-IN MENU ================= */}
+              {/* MOBILE LOGGED-IN MENU  */}
               {!isPending && session && (
                 <>
                   {/* Profile Info */}
@@ -279,7 +279,7 @@ export default function Navbar() {
 
                   {/* My Bookings */}
                   <Link
-                    href="/bookings"
+                    href="/my-booking"
                     onClick={() => setIsMenuOpen(false)}
                     className="rounded-xl px-4 py-3 text-sm font-semibold text-zinc-300 transition hover:bg-white/10 hover:text-lime-400"
                   >

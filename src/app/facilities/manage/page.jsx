@@ -12,7 +12,7 @@ export default function ManageFacilitiesPage() {
   const [facilities, setFacilities] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  
+  // Edit Modal State
   const [editingFacility, setEditingFacility] = useState(null);
   const [updating, setUpdating] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
@@ -24,14 +24,11 @@ export default function ManageFacilitiesPage() {
 
     try {
       setLoading(true);
-
       const res = await fetch(
         `http://localhost:5000/my-facilities?email=${encodeURIComponent(userEmail)}`
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch facilities");
-      }
+      if (!res.ok) throw new Error("Failed to fetch facilities");
 
       const data = await res.json();
       setFacilities(data);
@@ -43,11 +40,10 @@ export default function ManageFacilitiesPage() {
     }
   }, [session?.user?.email]);
 
-  
   useEffect(() => {
     if (!isPending) {
         if (session?.user?.email) {
-           // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern//
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern//
         fetchMyFacilities();
       } else {
         setLoading(false);
@@ -70,15 +66,10 @@ export default function ManageFacilitiesPage() {
         method: "DELETE",
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to delete facility");
-      }
+      if (!res.ok) throw new Error("Failed to delete facility");
 
       toast.success("Facility deleted successfully!");
-
-      setFacilities((prev) =>
-        prev.filter((facility) => facility._id !== id)
-      );
+      setFacilities((prev) => prev.filter((facility) => facility._id !== id));
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete facility.");
@@ -90,7 +81,6 @@ export default function ManageFacilitiesPage() {
   // Update Facility
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
-
     if (!editingFacility) return;
 
     try {
@@ -100,21 +90,15 @@ export default function ManageFacilitiesPage() {
         `http://localhost:5000/facilities/${editingFacility._id}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(editingFacility),
         }
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to update facility");
-      }
+      if (!res.ok) throw new Error("Failed to update facility");
 
       toast.success("Facility updated successfully!");
-
       setEditingFacility(null);
-
       await fetchMyFacilities();
     } catch (err) {
       console.error(err);
@@ -124,11 +108,14 @@ export default function ManageFacilitiesPage() {
     }
   };
 
- 
+  // Loading Screen
   if (isPending || loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-lime-400">
-        Loading facilities...
+      <div className="flex min-h-screen w-full items-center justify-center bg-black text-lime-400 font-semibold">
+        <div className="flex items-center gap-3">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-lime-400 border-t-transparent" />
+          Loading facilities...
+        </div>
       </div>
     );
   }
@@ -136,17 +123,15 @@ export default function ManageFacilitiesPage() {
   // Not Logged In Screen
   if (!session) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-white p-6">
-        <div className="text-center border border-zinc-800 bg-zinc-950 p-8 rounded-3xl">
-          <h1 className="text-xl font-bold">Access Denied</h1>
-
-          <p className="text-zinc-400 text-sm mt-2">
-            Login to manage your facilities.
+      <div className="flex min-h-screen w-full items-center justify-center bg-black p-6 text-white">
+        <div className="w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-950 p-8 text-center shadow-2xl">
+          <h1 className="text-2xl font-bold">Access Denied</h1>
+          <p className="mt-2 text-sm text-zinc-400">
+            Please log in to manage your facilities.
           </p>
-
           <Link
             href="/login"
-            className="mt-4 inline-block bg-lime-400 text-black px-6 py-2 rounded-xl font-bold"
+            className="mt-6 inline-block w-full rounded-xl bg-lime-400 px-6 py-3 font-bold text-black transition-transform hover:scale-[1.02] active:scale-[0.98]"
           >
             Login
           </Link>
@@ -156,173 +141,232 @@ export default function ManageFacilitiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black px-6 py-12 text-white max-w-6xl mx-auto">
+    <div className="min-h-screen w-full bg-black text-white">
       <ToastContainer position="top-right" theme="dark" />
 
-      <h1 className="text-3xl font-bold mb-8">
-        Manage <span className="text-lime-400">My Facilities</span>
-      </h1>
+      {/* Main Page Container */}
+      <div className="mx-auto max-w-7xl px-6 py-12">
+        {/* Header Section */}
+        <div className="mb-10 flex flex-col items-start justify-between gap-4 border-b border-zinc-800 pb-6 sm:flex-row sm:items-center">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+              Manage <span className="text-lime-400">My Facilities</span>
+            </h1>
+            <p className="mt-1 text-sm text-zinc-400">
+              Update details, adjust pricing, or remove existing listings.
+            </p>
+          </div>
 
-      {facilities.length === 0 ? (
-        <div className="p-12 text-center border border-zinc-800 rounded-3xl bg-zinc-950">
-          <p className="text-zinc-400">
-            You haven&apos;t added any facilities yet.
-          </p>
+          <Link
+            href="/facilities/add"
+            className="rounded-xl bg-lime-400 px-5 py-2.5 text-sm font-bold text-black transition-transform hover:scale-[1.02] active:scale-[0.98]"
+          >
+            + Add New Facility
+          </Link>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {facilities.map((facility) => (
-            <div
-              key={facility._id}
-              className="rounded-3xl border border-zinc-800 bg-zinc-950 p-5 flex flex-col justify-between"
-            >
-              <div>
-                <img
-                  src={facility.image}
-                  alt={facility.name}
-                  className="h-40 w-full object-cover rounded-2xl mb-4"
-                />
 
-                <h3 className="text-xl font-bold">{facility.name}</h3>
-
-                <p className="text-xs text-lime-400 font-semibold">
-                  {facility.type}
-                </p>
-
-                <p className="text-sm text-zinc-400 mt-2">
-                  ৳{facility.pricePerHour || facility.price} / hour
-                </p>
-              </div>
-
-              <div className="flex gap-3 mt-6">
-                {/* Edit Button */}
-                <button
-                  onClick={() =>
-                    setEditingFacility({
-                      ...facility,
-                    })
-                  }
-                  className="flex-1 rounded-xl bg-zinc-800 py-2 text-xs font-semibold hover:bg-zinc-700"
-                >
-                  Edit
-                </button>
-
-                {/* Delete Button */}
-                <button
-                  onClick={() => handleDelete(facility._id)}
-                  disabled={deletingId === facility._id}
-                  className="flex-1 rounded-xl bg-red-500/20 text-red-400 border border-red-500/30 py-2 text-xs font-semibold hover:bg-red-500/30 disabled:opacity-50"
-                >
-                  {deletingId === facility._id ? "Deleting..." : "Delete"}
-                </button>
-              </div>
+        {/* Empty State */}
+        {facilities.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-zinc-800 bg-zinc-950/50 p-16 text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-900 text-2xl text-lime-400">
+              ⚡
             </div>
-          ))}
-        </div>
-      )}
+            <h3 className="text-xl font-bold">No facilities found</h3>
+            <p className="mt-1 text-sm text-zinc-400">
+              You haven&apos;t added any facilities to PlayPlex yet.
+            </p>
+            <Link
+              href="/facilities/add"
+              className="mt-6 rounded-xl bg-zinc-800 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
+            >
+              Create your first listing
+            </Link>
+          </div>
+        ) : (
+          /* Facility Cards Grid */
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {facilities.map((facility) => (
+              <div
+                key={facility._id}
+                className="group flex flex-col justify-between overflow-hidden rounded-3xl border border-zinc-800/80 bg-zinc-950 p-5 transition-all duration-300 hover:border-zinc-700 hover:shadow-xl hover:shadow-lime-400/5"
+              >
+                <div>
+                  <div className="relative mb-4 h-48 w-full overflow-hidden rounded-2xl bg-zinc-900">
+                    <img
+                      src={facility.image || "/placeholder.jpg"}
+                      alt={facility.name}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <span className="absolute right-3 top-3 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-lime-400 backdrop-blur-md">
+                      {facility.type || "Sports"}
+                    </span>
+                  </div>
 
-      {/* Edit Modal */}
+                  <h3 className="text-xl font-bold tracking-tight">
+                    {facility.name}
+                  </h3>
+
+                  <p className="mt-1 text-xs text-zinc-400">
+                    📍 {facility.location || "Location not set"}
+                  </p>
+
+                  <p className="mt-3 text-lg font-bold text-lime-400">
+                    ৳{facility.pricePerHour || facility.price || 0}{" "}
+                    <span className="text-xs font-normal text-zinc-400">
+                      / hour
+                    </span>
+                  </p>
+                </div>
+
+                {/* Actions */}
+                <div className="mt-6 flex gap-3 border-t border-zinc-900 pt-4">
+                  <button
+                    onClick={() => setEditingFacility({ ...facility })}
+                    className="flex-1 rounded-xl bg-zinc-800 py-2.5 text-xs font-bold text-white transition-colors hover:bg-zinc-700"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(facility._id)}
+                    disabled={deletingId === facility._id}
+                    className="flex-1 rounded-xl border border-red-500/20 bg-red-500/10 py-2.5 text-xs font-bold text-red-400 transition-colors hover:bg-red-500/20 disabled:opacity-50"
+                  >
+                    {deletingId === facility._id ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Edit Modal Overlay */}
       {editingFacility && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
-          <div className="bg-zinc-950 border border-zinc-800 p-6 rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">Update Facility</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl border border-zinc-800 bg-zinc-950 p-6 shadow-2xl">
+            <div className="mb-6 flex items-center justify-between border-b border-zinc-800 pb-4">
+              <h2 className="text-xl font-bold">Update Facility</h2>
+              <button
+                onClick={() => setEditingFacility(null)}
+                className="text-zinc-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
 
             <form onSubmit={handleUpdateSubmit} className="space-y-4 text-sm">
-              {/* Name */}
-              <input
-                type="text"
-                value={editingFacility.name || ""}
-                onChange={(e) =>
-                  setEditingFacility({
-                    ...editingFacility,
-                    name: e.target.value,
-                  })
-                }
-                className="w-full bg-zinc-900 border border-zinc-800 p-3 rounded-xl"
-                placeholder="Name"
-                required
-              />
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-zinc-400">
+                  Facility Name
+                </label>
+                <input
+                  type="text"
+                  value={editingFacility.name || ""}
+                  onChange={(e) =>
+                    setEditingFacility({
+                      ...editingFacility,
+                      name: e.target.value,
+                    })
+                  }
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900 p-3 text-white focus:border-lime-400 focus:outline-none"
+                  required
+                />
+              </div>
 
-              {/* Location */}
-              <input
-                type="text"
-                value={editingFacility.location || ""}
-                onChange={(e) =>
-                  setEditingFacility({
-                    ...editingFacility,
-                    location: e.target.value,
-                  })
-                }
-                className="w-full bg-zinc-900 border border-zinc-800 p-3 rounded-xl"
-                placeholder="Location"
-                required
-              />
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-zinc-400">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={editingFacility.location || ""}
+                  onChange={(e) =>
+                    setEditingFacility({
+                      ...editingFacility,
+                      location: e.target.value,
+                    })
+                  }
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900 p-3 text-white focus:border-lime-400 focus:outline-none"
+                  required
+                />
+              </div>
 
-              {/* Price */}
-              <input
-                type="number"
-                value={
-                  editingFacility.pricePerHour ||
-                  editingFacility.price ||
-                  ""
-                }
-                onChange={(e) =>
-                  setEditingFacility({
-                    ...editingFacility,
-                    pricePerHour: e.target.value,
-                    price: e.target.value,
-                  })
-                }
-                className="w-full bg-zinc-900 border border-zinc-800 p-3 rounded-xl"
-                placeholder="Price/hr"
-                required
-              />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-zinc-400">
+                    Price (৳/hr)
+                  </label>
+                  <input
+                    type="number"
+                    value={
+                      editingFacility.pricePerHour ||
+                      editingFacility.price ||
+                      ""
+                    }
+                    onChange={(e) =>
+                      setEditingFacility({
+                        ...editingFacility,
+                        pricePerHour: e.target.value,
+                        price: e.target.value,
+                      })
+                    }
+                    className="w-full rounded-xl border border-zinc-800 bg-zinc-900 p-3 text-white focus:border-lime-400 focus:outline-none"
+                    required
+                  />
+                </div>
 
-              {/* Capacity */}
-              <input
-                type="number"
-                value={editingFacility.capacity || ""}
-                onChange={(e) =>
-                  setEditingFacility({
-                    ...editingFacility,
-                    capacity: e.target.value,
-                  })
-                }
-                className="w-full bg-zinc-900 border border-zinc-800 p-3 rounded-xl"
-                placeholder="Capacity"
-                required
-              />
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-zinc-400">
+                    Capacity
+                  </label>
+                  <input
+                    type="number"
+                    value={editingFacility.capacity || ""}
+                    onChange={(e) =>
+                      setEditingFacility({
+                        ...editingFacility,
+                        capacity: e.target.value,
+                      })
+                    }
+                    className="w-full rounded-xl border border-zinc-800 bg-zinc-900 p-3 text-white focus:border-lime-400 focus:outline-none"
+                    required
+                  />
+                </div>
+              </div>
 
-              {/* Description */}
-              <textarea
-                value={editingFacility.description || ""}
-                onChange={(e) =>
-                  setEditingFacility({
-                    ...editingFacility,
-                    description: e.target.value,
-                  })
-                }
-                className="w-full bg-zinc-900 border border-zinc-800 p-3 rounded-xl"
-                placeholder="Description"
-                rows="3"
-                required
-              />
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-zinc-400">
+                  Description
+                </label>
+                <textarea
+                  value={editingFacility.description || ""}
+                  onChange={(e) =>
+                    setEditingFacility({
+                      ...editingFacility,
+                      description: e.target.value,
+                    })
+                  }
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900 p-3 text-white focus:border-lime-400 focus:outline-none"
+                  rows="3"
+                  required
+                />
+              </div>
 
-              {/* Buttons */}
-              <div className="flex gap-3">
+              <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
                   disabled={updating}
-                  className="flex-1 bg-lime-400 text-black py-2.5 rounded-xl font-bold disabled:opacity-50"
+                  className="flex-1 rounded-xl bg-lime-400 py-3 font-bold text-black transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
                 >
-                  {updating ? "Saving..." : "Save"}
+                  {updating ? "Saving..." : "Save Changes"}
                 </button>
 
                 <button
                   type="button"
                   disabled={updating}
                   onClick={() => setEditingFacility(null)}
-                  className="flex-1 bg-zinc-800 py-2.5 rounded-xl"
+                  className="flex-1 rounded-xl bg-zinc-800 py-3 font-semibold text-white transition-colors hover:bg-zinc-700"
                 >
                   Cancel
                 </button>

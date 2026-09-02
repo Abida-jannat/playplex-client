@@ -37,13 +37,13 @@ export default function FacilitiesPage() {
     fetchFacilities();
   }, []);
 
-  // Book Now Handler
+
   const handleBookNow = (facilityId) => {
     if (!session) {
       router.push("/login");
       return;
     }
-    router.push(`/facilities/${facilityId}/book`);
+    router.push(`/facilities/${facilityId}`);
   };
 
   if (loading || sessionLoading) {
