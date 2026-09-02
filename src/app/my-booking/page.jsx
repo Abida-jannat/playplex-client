@@ -15,20 +15,15 @@ export default function MyBookingsPage() {
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-  // Fetch user's bookings
+  // Fetch user's bookings securely using HTTPOnly cookie authentication
   const fetchMyBookings = useCallback(async () => {
-    const userEmail = session?.user?.email;
-    if (!userEmail) {
-      setLoading(false);
-      return;
-    }
-
     try {
       setLoading(true);
 
-      const res = await fetch(
-        `${API_BASE_URL}/my-booking?email=${encodeURIComponent(userEmail)}`
-      );
+      const res = await fetch(`${API_BASE_URL}/my-booking`, {
+        method: "GET",
+        credentials: "include", // CRITICAL: Sends the secure JWT HTTPOnly cookie automatically
+      });
 
       if (!res.ok) {
         throw new Error("Failed to fetch bookings");
@@ -42,12 +37,12 @@ export default function MyBookingsPage() {
     } finally {
       setLoading(false);
     }
-  }, [session?.user?.email, API_BASE_URL]);
+  }, [API_BASE_URL]);
 
   useEffect(() => {
     if (!isPending) {
-        if (session?.user?.email) {
-          // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern//
+      if (session?.user?.email) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern//
         fetchMyBookings();
       } else {
         setLoading(false);
@@ -68,6 +63,7 @@ export default function MyBookingsPage() {
 
       const res = await fetch(`${API_BASE_URL}/my-booking/${id}`, {
         method: "DELETE",
+        credentials: "include", // Include cookie for private delete route protection
       });
 
       if (!res.ok) {

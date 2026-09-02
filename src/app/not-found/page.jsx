@@ -9,7 +9,7 @@ export default function NotFound() {
           404
         </div>
 
-        {/* Friendly Error Message */}
+        
         <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
           Page Not Found
         </h1>

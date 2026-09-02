@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
@@ -11,32 +11,53 @@ export default function FacilitiesPage() {
   const [facilities, setFacilities] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Search and Filter state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+
   // Better Auth session
   const { data: session, isPending: sessionLoading } = authClient.useSession();
 
-  // Fetch Facilities
-  useEffect(() => {
-    const fetchFacilities = async () => {
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        const response = await fetch(`${baseUrl}/facilities`);
+  // Fetch Facilities with search and type parameters
+  const fetchFacilities = useCallback(async (search = "", type = "") => {
+    try {
+      setLoading(true);
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const response = await fetch(
+        `${baseUrl}/facilities?search=${encodeURIComponent(search)}&type=${encodeURIComponent(type)}`
+      );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch facilities");
-        }
-
-        const data = await response.json();
-        setFacilities(data);
-      } catch (error) {
-        console.error("Failed to fetch facilities:", error);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch facilities");
       }
-    };
 
-    fetchFacilities();
+      const data = await response.json();
+      setFacilities(data);
+    } catch (error) {
+      console.error("Failed to fetch facilities:", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern//
+    fetchFacilities();
+  }, [fetchFacilities]);
+
+ 
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    fetchFacilities(query, selectedType);
+  };
+
+
+  const handleTypeSelect = (type) => {
+    const newType = selectedType === type ? "" : type;
+    setSelectedType(newType);
+    fetchFacilities(searchQuery, newType);
+  };
 
   const handleBookNow = (facilityId) => {
     if (!session) {
@@ -73,12 +94,40 @@ export default function FacilitiesPage() {
           </p>
         </div>
 
+        {/* Search & Filter Controls */}
+        <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Search facility by name..."
+            className="w-full rounded-2xl border border-zinc-800 bg-zinc-950 px-4 py-3.5 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-lime-400 md:max-w-md"
+          />
+
+          <div className="flex flex-wrap gap-2">
+            {["Football", "Cricket", "Basketball", "Tennis"].map((sport) => (
+              <button
+                key={sport}
+                type="button"
+                onClick={() => handleTypeSelect(sport)}
+                className={`rounded-xl px-4 py-2 text-xs font-semibold transition-colors ${
+                  selectedType === sport
+                    ? "bg-lime-400 text-black"
+                    : "border border-zinc-800 bg-zinc-950 text-zinc-300 hover:border-zinc-700"
+                }`}
+              >
+                {sport}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Empty State */}
         {facilities.length === 0 ? (
           <div className="rounded-3xl border border-zinc-800 bg-zinc-950 p-12 text-center">
             <h2 className="text-2xl font-bold">No Facilities Found</h2>
             <p className="mt-3 text-zinc-500">
-              There are currently no facilities available.
+              There are currently no facilities available matching your criteria.
             </p>
           </div>
         ) : (

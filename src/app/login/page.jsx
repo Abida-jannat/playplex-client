@@ -19,10 +19,10 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     setLoading(true);
 
     try {
+      
       const { error } = await authClient.signIn.email({
         email,
         password,
@@ -30,6 +30,23 @@ export default function LoginPage() {
 
       if (error) {
         toast.error(error.message || "Invalid email or password.");
+        setLoading(false);
+        return;
+      }
+
+      
+      const tokenRes = await fetch("http://localhost:5000/jwt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+        credentials: "include", 
+      });
+
+      const tokenData = await tokenRes.json();
+
+      if (!tokenData.success) {
+        toast.error("Failed to generate session cookie.");
+        setLoading(false);
         return;
       }
 
@@ -41,7 +58,7 @@ export default function LoginPage() {
       }, 1000);
     } catch (err) {
       toast.error("Something went wrong. Please try again.");
-    } finally {
+
       setLoading(false);
     }
   };
@@ -67,7 +84,6 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-black px-4 py-12 text-white">
-
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -75,7 +91,6 @@ export default function LoginPage() {
       />
 
       <div className="w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-950 p-8 shadow-2xl">
-
         {/* Header */}
         <div className="mb-8 text-center">
           <p className="mb-2 text-xs font-semibold uppercase tracking-[4px] text-lime-400">
@@ -93,7 +108,6 @@ export default function LoginPage() {
 
         {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-5">
-
           {/* Email */}
           <div>
             <label className="mb-2 block text-sm font-medium text-zinc-300">
@@ -170,7 +184,6 @@ export default function LoginPage() {
             Register
           </Link>
         </p>
-
       </div>
     </div>
   );
