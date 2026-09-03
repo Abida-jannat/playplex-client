@@ -1,28 +1,16 @@
+
 import dns from "node:dns";
+
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 import { MongoClient } from "mongodb";
 
+console.log("URI:", process.env.MONGODB_URI);
+
 const uri = process.env.MONGODB_URI;
 
-if (!uri) {
-  throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
-}
+const client = new MongoClient(uri);
 
-let client;
-let clientPromise;
+const clientPromise = client.connect();
 
-if (process.env.NODE_ENV === "development") {
-  
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri);
-    global._mongoClientPromise = client.connect();
-  }
-  clientPromise = global._mongoClientPromise;
-} else {
-  // Direct connection in production
-  client = new MongoClient(uri);
-  clientPromise = client.connect();
-}
-
-export default clientPromise;;
+export default clientPromise;
