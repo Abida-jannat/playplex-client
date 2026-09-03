@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient, useSession } from "@/lib/auth-client";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,7 +12,7 @@ export default function Navbar() {
 
   const router = useRouter();
 
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending } = useSession();
 
   // Initialize theme from localStorage
   useEffect(() => {
@@ -373,7 +373,7 @@ export default function Navbar() {
               )}
             </div>
 
-        
+         
             <div className="mt-6 border-t border-zinc-800 pt-5">
               <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-zinc-600">
                 Play. Book. Compete.
