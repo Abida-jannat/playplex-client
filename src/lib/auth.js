@@ -8,6 +8,9 @@ import clientPromise from "./mongodb";
 const client = await clientPromise;
 
 export const auth = betterAuth({
+
+    baseURL: process.env.BETTER_AUTH_URL,
+  secret: process.env.BETTER_AUTH_SECRET,
   
   database: mongodbAdapter(client.db("playplex"), { client }),
   emailAndPassword: {
