@@ -15,13 +15,12 @@ export default function Navbar() {
 
   const router = useRouter();
 
+  // Call useSession unconditionally to follow React Hook rules
   const sessionData = useSession();
   
-
   const session = isMounted ? sessionData?.data : null;
   const isPending = isMounted ? sessionData?.isPending : true;
 
- 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern//
     setIsMounted(true);
@@ -32,6 +31,7 @@ export default function Navbar() {
       setDarkMode(false);
 
       document.documentElement.classList.remove("dark");
+
     } else {
       setDarkMode(true);
       document.documentElement.classList.add("dark");
@@ -145,21 +145,17 @@ export default function Navbar() {
             {darkMode ? "☀️" : "🌙"}
           </button>
 
-          
           {isPending ? (
 
             <div className="h-10 w-24 animate-pulse rounded-xl bg-zinc-800" />
 
           ) : session ? (
-              
-              <div className="relative">
-                
+            <div className="relative">
               <button
                 type="button"
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 transition hover:border-lime-400"
-                >
-                  
+              >
                 {session.user?.image ? (
                   <img
                     src={session.user.image}
@@ -170,13 +166,11 @@ export default function Navbar() {
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-lime-400 text-sm font-black text-zinc-950">
                     {session.user?.name?.charAt(0).toUpperCase() || "U"}
                   </div>
-                  )}
-                  
+                )}
 
                 <span className="max-w-[120px] truncate text-sm font-semibold">
                   {session.user?.name || "Profile"}
-                  </span>
-                  
+                </span>
 
                 <span
                   className={`text-xs text-zinc-500 transition-transform ${
@@ -187,21 +181,16 @@ export default function Navbar() {
                 </span>
               </button>
 
-                
-                {isProfileOpen && (
-                  
-                  <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-zinc-800 bg-zinc-950 p-2 shadow-2xl">
-                    
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-zinc-800 bg-zinc-950 p-2 shadow-2xl">
                   <div className="border-b border-zinc-800 px-4 py-3">
                     <p className="truncate text-sm font-bold text-white">
                       {session.user?.name || "User"}
-                      </p>
-                      
+                    </p>
                     <p className="mt-1 truncate text-xs text-zinc-500">
                       {session.user?.email}
                     </p>
-                    </div>
-                    
+                  </div>
 
                   <Link
                     href="/my-booking"
@@ -209,8 +198,7 @@ export default function Navbar() {
                     className="mt-2 block rounded-xl px-4 py-3 text-sm font-semibold text-zinc-300 transition hover:bg-zinc-900 hover:text-lime-400"
                   >
                     My Bookings
-                    </Link>
-                    
+                  </Link>
 
                   <Link
                     href="/facilities/add"
@@ -220,7 +208,6 @@ export default function Navbar() {
                     Add Facility
                   </Link>
 
-                    
                   <Link
                     href="/facilities/manage"
                     onClick={() => setIsProfileOpen(false)}
@@ -229,10 +216,8 @@ export default function Navbar() {
                     Manage My Facilities
                   </Link>
 
-                    
                   <div className="my-2 border-t border-zinc-800" />
 
-                    
                   <button
                     type="button"
                     onClick={handleLogout}
@@ -241,12 +226,9 @@ export default function Navbar() {
                     Logout
                   </button>
                 </div>
-                )}
-                
-              </div>
-              
-            ) : (
-                
+              )}
+            </div>
+          ) : (
             <Link
               href="/login"
               className="inline-flex items-center justify-center rounded-xl bg-lime-400 px-6 py-2 text-sm font-bold text-zinc-950 shadow-lg shadow-lime-400/10 transition-all hover:bg-lime-300"
@@ -255,7 +237,6 @@ export default function Navbar() {
             </Link>
           )}
         </div>
-
 
         <div className="flex items-center gap-2 md:hidden">
           <button
@@ -285,7 +266,7 @@ export default function Navbar() {
           <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
 
             <div className="flex flex-col gap-2">
-
+              
               <Link
                 href="/"
                 onClick={() => setIsMenuOpen(false)}
@@ -293,7 +274,6 @@ export default function Navbar() {
               >
                 Home
               </Link>
-
 
               <Link
                 href="/facilities"
@@ -303,11 +283,8 @@ export default function Navbar() {
                 All Facilities
               </Link>
 
-
               {!isPending && session && (
-
                 <>
-                  
                   <div className="my-2 flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
                     {session.user?.image ? (
                       <img
@@ -325,13 +302,11 @@ export default function Navbar() {
                       <p className="truncate text-sm font-bold text-white">
                         {session.user?.name || "User"}
                       </p>
-
                       <p className="truncate text-xs text-zinc-500">
                         {session.user?.email}
                       </p>
                     </div>
                   </div>
-
 
                   <Link
                     href="/my-booking"
@@ -341,7 +316,6 @@ export default function Navbar() {
                     My Bookings
                   </Link>
 
-                  
                   <Link
                     href="/facilities/add"
                     onClick={() => setIsMenuOpen(false)}
@@ -350,7 +324,6 @@ export default function Navbar() {
                     Add Facility
                   </Link>
 
-                  
                   <Link
                     href="/facilities/manage"
                     onClick={() => setIsMenuOpen(false)}
@@ -359,7 +332,6 @@ export default function Navbar() {
                     Manage My Facilities
                   </Link>
 
-                  
                   <button
                     type="button"
                     onClick={handleLogout}
