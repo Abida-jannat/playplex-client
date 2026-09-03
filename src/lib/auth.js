@@ -1,5 +1,5 @@
 import dns from "node:dns";
-dns.setServers(['8.8.8.8', '8.8.4.4']);
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
@@ -9,13 +9,22 @@ const client = await clientPromise;
 
 export const auth = betterAuth({
 
-    baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: process.env.BETTER_AUTH_URL,
+
   secret: process.env.BETTER_AUTH_SECRET,
-  
+
+  // Allow local and deployed frontend
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://playplex-client.vercel.app",
+  ],
+
   database: mongodbAdapter(client.db("playplex"), { client }),
+
   emailAndPassword: {
     enabled: true,
   },
+
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID,
