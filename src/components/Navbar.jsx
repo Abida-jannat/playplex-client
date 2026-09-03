@@ -1,6 +1,6 @@
 "use client";
 
-export const dynamic = "force-dynamic";
+
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -40,6 +40,7 @@ export default function Navbar() {
 
   // Toggle Theme Function
   const toggleTheme = () => {
+    
     if (darkMode) {
       setDarkMode(false);
       document.documentElement.classList.remove("dark");
@@ -266,7 +267,7 @@ export default function Navbar() {
           <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
 
             <div className="flex flex-col gap-2">
-              
+
               <Link
                 href="/"
                 onClick={() => setIsMenuOpen(false)}
