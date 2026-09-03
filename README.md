@@ -1,3 +1,20 @@
+project name: playplex
+
+Purpose: PlayPlex is a comprehensive sports facility booking and management platform designed to help users easily discover, book, and manage sports venues and courts. It features secure authentication, user dashboard tracking, and dynamic theme switching for an optimal user experience.
+
+live URL: https://playplex-client.vercel.app
+
+Features: 
+Dynamic Navigation & Layout:** Responsive header with mobile menu support and authentication-aware links.
+User Authentication: Secure login, registration, and logout workflows.
+Facility Management:Browse all available facilities, add new listings, and manage existing ones.
+Booking System: Track and view personal bookings effortlessly.
+NPM Packages Used:
+react
+react-dom
+next.js
+better-auth
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
