@@ -11,18 +11,26 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
 
   const router = useRouter();
 
-  const { data: session, isPending } = useSession();
+  const sessionData = useSession();
+  
 
-  // Initialize theme from localStorage
+  const session = isMounted ? sessionData?.data : null;
+  const isPending = isMounted ? sessionData?.isPending : true;
+
+ 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern//
+    setIsMounted(true);
     const savedTheme = localStorage.getItem("theme");
+
     if (savedTheme === "light") {
-// eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern//
+
       setDarkMode(false);
-       
+
       document.documentElement.classList.remove("dark");
     } else {
       setDarkMode(true);
@@ -83,7 +91,6 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-1 md:flex">
 
-          {/* Home */}
           <Link
             href="/"
             className="rounded-lg px-4 py-2 text-sm font-semibold text-zinc-300 transition-all duration-200 hover:bg-white/10 hover:text-lime-400"
@@ -91,7 +98,7 @@ export default function Navbar() {
             Home
           </Link>
 
-          {/* All Facilities */}
+
           <Link
             href="/facilities"
             className="rounded-lg px-4 py-2 text-sm font-semibold text-zinc-300 transition-all duration-200 hover:bg-white/10 hover:text-lime-400"
@@ -99,7 +106,7 @@ export default function Navbar() {
             All Facilities
           </Link>
 
-          {/* Logged-in Links */}
+
           {!isPending && session && (
             <>
               <Link
@@ -129,7 +136,6 @@ export default function Navbar() {
       
         <div className="hidden items-center gap-3 md:flex">
 
-          {/* Theme Toggle Button */}
           <button
             type="button"
             onClick={toggleTheme}
@@ -139,21 +145,21 @@ export default function Navbar() {
             {darkMode ? "☀️" : "🌙"}
           </button>
 
-          {/* Loading */}
+          
           {isPending ? (
+
             <div className="h-10 w-24 animate-pulse rounded-xl bg-zinc-800" />
+
           ) : session ? (
               
-          
-            <div className="relative">
-
+              <div className="relative">
+                
               <button
                 type="button"
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 transition hover:border-lime-400"
-              >
-
-                {/* Profile Image */}
+                >
+                  
                 {session.user?.image ? (
                   <img
                     src={session.user.image}
@@ -164,14 +170,14 @@ export default function Navbar() {
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-lime-400 text-sm font-black text-zinc-950">
                     {session.user?.name?.charAt(0).toUpperCase() || "U"}
                   </div>
-                )}
+                  )}
+                  
 
-                {/* Name */}
                 <span className="max-w-[120px] truncate text-sm font-semibold">
                   {session.user?.name || "Profile"}
-                </span>
+                  </span>
+                  
 
-                {/* Arrow */}
                 <span
                   className={`text-xs text-zinc-500 transition-transform ${
                     isProfileOpen ? "rotate-180" : ""
@@ -181,30 +187,31 @@ export default function Navbar() {
                 </span>
               </button>
 
-              {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-zinc-800 bg-zinc-950 p-2 shadow-2xl">
-
-                  {/* User Info */}
+                
+                {isProfileOpen && (
+                  
+                  <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-zinc-800 bg-zinc-950 p-2 shadow-2xl">
+                    
                   <div className="border-b border-zinc-800 px-4 py-3">
                     <p className="truncate text-sm font-bold text-white">
                       {session.user?.name || "User"}
-                    </p>
-
+                      </p>
+                      
                     <p className="mt-1 truncate text-xs text-zinc-500">
                       {session.user?.email}
                     </p>
-                  </div>
+                    </div>
+                    
 
-                  {/* My Bookings */}
                   <Link
                     href="/my-booking"
                     onClick={() => setIsProfileOpen(false)}
                     className="mt-2 block rounded-xl px-4 py-3 text-sm font-semibold text-zinc-300 transition hover:bg-zinc-900 hover:text-lime-400"
                   >
                     My Bookings
-                  </Link>
+                    </Link>
+                    
 
-                  {/* Add Facility */}
                   <Link
                     href="/facilities/add"
                     onClick={() => setIsProfileOpen(false)}
@@ -213,7 +220,7 @@ export default function Navbar() {
                     Add Facility
                   </Link>
 
-                  {/* Manage Facilities */}
+                    
                   <Link
                     href="/facilities/manage"
                     onClick={() => setIsProfileOpen(false)}
@@ -222,10 +229,10 @@ export default function Navbar() {
                     Manage My Facilities
                   </Link>
 
-                  {/* Divider */}
+                    
                   <div className="my-2 border-t border-zinc-800" />
 
-                  {/* Logout */}
+                    
                   <button
                     type="button"
                     onClick={handleLogout}
@@ -234,12 +241,12 @@ export default function Navbar() {
                     Logout
                   </button>
                 </div>
-              )}
-            </div>
-
-          ) : (
-
-            /*  LOGIN  */
+                )}
+                
+              </div>
+              
+            ) : (
+                
             <Link
               href="/login"
               className="inline-flex items-center justify-center rounded-xl bg-lime-400 px-6 py-2 text-sm font-bold text-zinc-950 shadow-lg shadow-lime-400/10 transition-all hover:bg-lime-300"
@@ -249,7 +256,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* MOBILE BUTTON & THEME TOGGLE  */}
+
         <div className="flex items-center gap-2 md:hidden">
           <button
             type="button"
@@ -271,14 +278,14 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* MOBILE MENU  */}
+
       {isMenuOpen && (
         <div className="border-t border-zinc-800 bg-zinc-950 md:hidden">
+
           <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
 
             <div className="flex flex-col gap-2">
 
-              {/* Home */}
               <Link
                 href="/"
                 onClick={() => setIsMenuOpen(false)}
@@ -287,7 +294,7 @@ export default function Navbar() {
                 Home
               </Link>
 
-              {/* Facilities */}
+
               <Link
                 href="/facilities"
                 onClick={() => setIsMenuOpen(false)}
@@ -296,12 +303,12 @@ export default function Navbar() {
                 All Facilities
               </Link>
 
-              {/* MOBILE LOGGED-IN MENU  */}
-              {!isPending && session && (
-                <>
-                  {/* Profile Info */}
-                  <div className="my-2 flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
 
+              {!isPending && session && (
+
+                <>
+                  
+                  <div className="my-2 flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
                     {session.user?.image ? (
                       <img
                         src={session.user.image}
@@ -325,7 +332,7 @@ export default function Navbar() {
                     </div>
                   </div>
 
-                  {/* My Bookings */}
+
                   <Link
                     href="/my-booking"
                     onClick={() => setIsMenuOpen(false)}
@@ -334,7 +341,7 @@ export default function Navbar() {
                     My Bookings
                   </Link>
 
-                  {/* Add Facility */}
+                  
                   <Link
                     href="/facilities/add"
                     onClick={() => setIsMenuOpen(false)}
@@ -343,7 +350,7 @@ export default function Navbar() {
                     Add Facility
                   </Link>
 
-                  {/* Manage Facilities */}
+                  
                   <Link
                     href="/facilities/manage"
                     onClick={() => setIsMenuOpen(false)}
@@ -352,7 +359,7 @@ export default function Navbar() {
                     Manage My Facilities
                   </Link>
 
-                  {/* Logout */}
+                  
                   <button
                     type="button"
                     onClick={handleLogout}
@@ -363,7 +370,6 @@ export default function Navbar() {
                 </>
               )}
 
-             
               {!isPending && !session && (
                 <Link
                   href="/login"
@@ -375,7 +381,6 @@ export default function Navbar() {
               )}
             </div>
 
-         
             <div className="mt-6 border-t border-zinc-800 pt-5">
               <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-zinc-600">
                 Play. Book. Compete.
