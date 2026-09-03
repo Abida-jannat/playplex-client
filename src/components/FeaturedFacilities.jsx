@@ -7,8 +7,13 @@ export default function FeaturedFacilities() {
   const [facilities, setFacilities] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Base API URL configuration
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
   useEffect(() => {
-    fetch("http://localhost:5000/facilities")
+    fetch(`${API_BASE_URL}/facilities`, {
+      credentials: "include", // Crucial for sending authentication cookies cross-origin if protected, or good practice consistency
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch facilities");
@@ -23,24 +28,24 @@ export default function FeaturedFacilities() {
         console.error("Failed to fetch facilities:", error);
         setLoading(false);
       });
-  }, []);
+  }, [API_BASE_URL]);
 
   return (
     <section className="bg-black py-20">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="mx-auto max-w-7xl px-6">
 
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-10">
+        <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-lime-400 font-semibold uppercase tracking-[4px] text-sm mb-3">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[4px] text-lime-400">
               Find Your Game
             </p>
 
-            <h2 className="text-4xl md:text-5xl font-bold text-white">
+            <h2 className="text-4xl font-bold text-white md:text-5xl">
               Featured <span className="text-lime-400">Facilities</span>
             </h2>
 
-            <p className="text-gray-400 mt-4 max-w-xl">
+            <p className="mt-4 max-w-xl text-gray-400">
               Discover premium sports facilities and book your perfect
               playing space with PlayPlex.
             </p>
@@ -48,7 +53,7 @@ export default function FeaturedFacilities() {
 
           <Link
             href="/facilities"
-            className="mt-6 md:mt-0 text-lime-400 font-semibold hover:text-white transition"
+            className="mt-6 font-semibold text-lime-400 transition hover:text-white md:mt-0"
           >
             View All Facilities →
           </Link>
@@ -56,19 +61,19 @@ export default function FeaturedFacilities() {
 
         {/* Loading */}
         {loading && (
-          <div className="text-center py-16">
+          <div className="py-16 text-center">
             <p className="text-gray-400">Loading facilities...</p>
           </div>
         )}
 
         {/* No Facilities */}
         {!loading && facilities.length === 0 && (
-          <div className="text-center py-16 border border-zinc-800 rounded-3xl">
+          <div className="rounded-3xl border border-zinc-800 py-16 text-center">
             <h3 className="text-xl font-bold text-white">
               No facilities available
             </h3>
 
-            <p className="text-gray-500 mt-2">
+            <p className="mt-2 text-gray-500">
               Facilities will appear here once they are added.
             </p>
           </div>
@@ -76,13 +81,13 @@ export default function FeaturedFacilities() {
 
         {/* Cards */}
         {!loading && facilities.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+          <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-3">
 
             {facilities.slice(0, 6).map((facility) => (
 
               <div
                 key={facility._id}
-                className="group bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden hover:border-lime-400/50 transition duration-300"
+                className="group overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950 transition duration-300 hover:border-lime-400/50"
               >
 
                 {/* Image */}
@@ -91,27 +96,27 @@ export default function FeaturedFacilities() {
                   <img
                     src={facility.image}
                     alt={facility.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                    className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                   />
 
                   {/* Dark overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
 
                   {/* Sport Badge */}
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-lime-400 text-black px-3 py-1.5 rounded-full text-xs font-bold">
-                      {facility.sport}
+                  <div className="absolute left-4 top-4">
+                    <span className="rounded-full bg-lime-400 px-3 py-1.5 text-xs font-bold text-black">
+                      {facility.type || facility.sport}
                     </span>
                   </div>
 
                   {/* Price */}
-                  <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur-sm px-4 py-2 rounded-xl">
-                    <p className="text-lime-400 font-bold">
-                      ৳{facility.price}
+                  <div className="absolute bottom-4 right-4 rounded-xl bg-black/80 px-4 py-2 backdrop-blur-sm">
+                    <p className="font-bold text-lime-400">
+                      ৳{facility.pricePerHour || facility.price}
                     </p>
 
-                    <p className="text-gray-400 text-xs">
-                      per session
+                    <p className="text-xs text-gray-400">
+                      per hour
                     </p>
                   </div>
 
@@ -120,12 +125,12 @@ export default function FeaturedFacilities() {
                 {/* Card Content */}
                 <div className="p-6">
 
-                  <h3 className="text-xl font-bold text-white group-hover:text-lime-400 transition">
+                  <h3 className="text-xl font-bold text-white transition group-hover:text-lime-400">
                     {facility.name}
                   </h3>
 
                   {/* Location */}
-                  <div className="flex items-center gap-2 mt-3 text-gray-400">
+                  <div className="mt-3 flex items-center gap-2 text-gray-400">
                     <span>📍</span>
 
                     <span className="text-sm">
@@ -134,27 +139,27 @@ export default function FeaturedFacilities() {
                   </div>
 
                   {/* Description */}
-                  <p className="text-gray-500 text-sm mt-4 line-clamp-2">
+                  <p className="mt-4 line-clamp-2 text-sm text-gray-500">
                     {facility.description}
                   </p>
 
                   {/* Bottom */}
-                  <div className="flex items-center justify-between mt-6 pt-5 border-t border-zinc-800">
+                  <div className="mt-6 flex items-center justify-between border-t border-zinc-800 pt-5">
 
                     <div>
                       <p className="text-xs text-gray-500">
-                        Availability
+                        Capacity
                       </p>
 
-                      <p className="text-white font-semibold mt-1">
-                        {facility.availableSlots} slots
+                      <p className="mt-1 font-semibold text-white">
+                        {facility.capacity} people
                       </p>
                     </div>
 
                     {/* Book Now */}
                     <Link
                       href={`/facilities/${facility._id}`}
-                      className="bg-lime-400 text-black px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-lime-300 hover:scale-105 transition"
+                      className="rounded-xl bg-lime-400 px-5 py-2.5 text-sm font-bold text-black transition hover:scale-105 hover:bg-lime-300"
                     >
                       Book Now →
                     </Link>

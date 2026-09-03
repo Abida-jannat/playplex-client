@@ -17,12 +17,14 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+  // Base API URL configuration
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      
       const { error } = await authClient.signIn.email({
         email,
         password,
@@ -34,8 +36,7 @@ export default function LoginPage() {
         return;
       }
 
-      
-      const tokenRes = await fetch("http://localhost:5000/jwt", {
+      const tokenRes = await fetch(`${API_BASE_URL}/jwt`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -58,7 +59,6 @@ export default function LoginPage() {
       }, 1000);
     } catch (err) {
       toast.error("Something went wrong. Please try again.");
-
       setLoading(false);
     }
   };

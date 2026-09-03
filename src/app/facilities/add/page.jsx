@@ -17,6 +17,9 @@ export default function AddFacilityPage() {
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
 
+  // Base API URL configuration
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
   const [formData, setFormData] = useState({
     name: "",
     type: "",
@@ -108,11 +111,12 @@ export default function AddFacilityPage() {
         createdAt: new Date(),
       };
 
-      const response = await fetch("http://localhost:5000/facilities", {
+      const response = await fetch(`${API_BASE_URL}/facilities`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", // Crucial for sending authentication cookies cross-origin
         body: JSON.stringify(facilityData),
       });
 

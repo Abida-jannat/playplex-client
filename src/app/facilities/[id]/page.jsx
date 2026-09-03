@@ -84,7 +84,7 @@ export default function FacilityDetailsPage({ params: paramsPromise }) {
         createdAt: new Date(),
       };
 
-      const response = await fetch(`${API_BASE_URL}/bookings`, {
+      const response = await fetch(`${API_BASE_URL}/my-bookings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

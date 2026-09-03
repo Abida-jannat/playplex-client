@@ -17,6 +17,9 @@ export default function ManageFacilitiesPage() {
   const [updating, setUpdating] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
+  // Base API URL configuration
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
   // Fetch My Facilities
   const fetchMyFacilities = useCallback(async () => {
     const userEmail = session?.user?.email;
@@ -25,7 +28,10 @@ export default function ManageFacilitiesPage() {
     try {
       setLoading(true);
       const res = await fetch(
-        `http://localhost:5000/my-facilities?email=${encodeURIComponent(userEmail)}`
+        `${API_BASE_URL}/my-facilities?email=${encodeURIComponent(userEmail)}`,
+        {
+          credentials: "include", // Crucial for sending authentication cookies cross-origin
+        }
       );
 
       if (!res.ok) throw new Error("Failed to fetch facilities");
@@ -38,12 +44,12 @@ export default function ManageFacilitiesPage() {
     } finally {
       setLoading(false);
     }
-  }, [session?.user?.email]);
+  }, [session?.user?.email, API_BASE_URL]);
 
   useEffect(() => {
     if (!isPending) {
-        if (session?.user?.email) {
-          // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern//
+      if (session?.user?.email) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern//
         fetchMyFacilities();
       } else {
         setLoading(false);
@@ -62,8 +68,9 @@ export default function ManageFacilitiesPage() {
     try {
       setDeletingId(id);
 
-      const res = await fetch(`http://localhost:5000/facilities/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/facilities/${id}`, {
         method: "DELETE",
+        credentials: "include", // Crucial for sending authentication cookies cross-origin
       });
 
       if (!res.ok) throw new Error("Failed to delete facility");
@@ -87,10 +94,11 @@ export default function ManageFacilitiesPage() {
       setUpdating(true);
 
       const res = await fetch(
-        `http://localhost:5000/facilities/${editingFacility._id}`,
+        `${API_BASE_URL}/facilities/${editingFacility._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
+          credentials: "include", // Crucial for sending authentication cookies cross-origin
           body: JSON.stringify(editingFacility),
         }
       );
@@ -111,7 +119,7 @@ export default function ManageFacilitiesPage() {
   // Loading Screen
   if (isPending || loading) {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-black text-lime-400 font-semibold">
+      <div className="flex min-h-screen w-full items-center justify-center bg-black font-semibold text-lime-400">
         <div className="flex items-center gap-3">
           <div className="h-5 w-5 animate-spin rounded-full border-2 border-lime-400 border-t-transparent" />
           Loading facilities...
@@ -244,7 +252,7 @@ export default function ManageFacilitiesPage() {
       {/* Edit Modal Overlay */}
       {editingFacility && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl border border-zinc-800 bg-zinc-950 p-6 shadow-2xl">
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-zinc-800 bg-zinc-950 p-6 shadow-2xl">
             <div className="mb-6 flex items-center justify-between border-b border-zinc-800 pb-4">
               <h2 className="text-xl font-bold">Update Facility</h2>
               <button

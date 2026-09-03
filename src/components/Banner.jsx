@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@heroui/react";
 
 export default function Banner() {
@@ -11,10 +12,7 @@ export default function Banner() {
       <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-lime-400/10 blur-3xl" />
 
       <div className="relative mx-auto grid min-h-[560px] max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 md:grid-cols-2 lg:px-8">
-
-
         <div className="max-w-xl">
-
           {/* Small Label */}
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-lime-400/30 bg-lime-400/10 px-4 py-2">
             <span className="h-2 w-2 rounded-full bg-lime-400" />
@@ -42,33 +40,28 @@ export default function Banner() {
           {/* Button */}
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Button
-              as="a"
+              as={Link}
               href="/facilities"
               variant="primary"
-              className="rounded-xl bg-lime-400 px-7 font-bold text-zinc-950 shadow-lg shadow-lime-400/10 transition-all hover:bg-lime-300"
+              className="rounded-xl bg-lime-400 px-7 font-bold text-zinc-950 shadow-lg shadow-lime-400/20"
             >
               Explore Facilities
             </Button>
 
-            <a
+            <Link
               href="/facilities"
               className="text-sm font-semibold text-zinc-300 transition hover:text-lime-400"
             >
               Find a facility →
-            </a>
+            </Link>
           </div>
         </div>
 
-
         <div className="relative flex justify-center md:justify-end">
-
           {/* Main Card */}
           <div className="relative h-[380px] w-full max-w-[430px] overflow-hidden rounded-[2rem] border border-zinc-800 bg-zinc-900 shadow-2xl">
-
-       
             <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-lime-400/20 blur-3xl" />
 
-          
             <div className="absolute -bottom-24 -left-20 h-72 w-72 rounded-full border-[40px] border-lime-400/10" />
 
             {/* Sport Text */}
@@ -84,9 +77,7 @@ export default function Banner() {
               </h2>
             </div>
 
-          
             <div className="absolute bottom-7 left-7 right-7 grid grid-cols-3 gap-3">
-
               <div className="rounded-2xl border border-zinc-700 bg-zinc-800/80 p-4 text-center backdrop-blur">
                 <div className="text-2xl">⚽</div>
                 <p className="mt-2 text-xs font-semibold text-zinc-300">
@@ -107,10 +98,8 @@ export default function Banner() {
                   Tennis
                 </p>
               </div>
-
             </div>
           </div>
-
         </div>
       </div>
     </section>
