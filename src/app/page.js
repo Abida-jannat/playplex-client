@@ -5,9 +5,11 @@ import FeaturedFacilities from "@/components/FeaturedFacilities";
 export default function Home() {
   return (
     <main>
-      <Banner></Banner>
-     
+      <Banner>
+
+      </Banner>
+
       <FeaturedFacilities></FeaturedFacilities>
-    </main>
+      </main>
   );
 }
