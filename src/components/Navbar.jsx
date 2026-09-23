@@ -13,13 +13,15 @@ export default function Navbar() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const dropdownRef = useRef(null);
 
-  // Sync DOM with saved theme on mount
+  // Sync DOM with saved theme on mount without hydration mismatch
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const isDark = savedTheme !== "light";
+    setDarkMode(isDark);
 
     if (isDark) {
       document.documentElement.classList.add("dark");
@@ -168,10 +170,11 @@ export default function Navbar() {
                 onClick={() => setIsProfileOpen((prev) => !prev)}
                 className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 p-1.5 transition hover:border-lime-400 focus:outline-none"
               >
-                {session.user.image ? (
+                {session.user.image && !imgError ? (
                   <img
                     src={session.user.image}
                     alt={session.user.name || "Avatar"}
+                    onError={() => setImgError(true)}
                     className="h-7 w-7 rounded-lg object-cover"
                   />
                 ) : (

@@ -13,12 +13,20 @@ export const auth = betterAuth({
   database: mongodbAdapter(client.db("playplex"), { client }),
   emailAndPassword: {
     enabled: true,
-    },
+  },
   
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    },
+  },
+  user: {
+    additionalFields: {
+      photoURL: {
+        type: "string",
+        required: false,
+      },
     },
   },
 });
