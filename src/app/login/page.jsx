@@ -1,15 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { signIn } from "@/lib/auth-client";
+import { signIn, useSession } from "@/lib/auth-client";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect") || "/";
+  const { data: session, isPending } = useSession();
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,17 +18,30 @@ export default function LoginPage() {
     password: "",
   });
 
+
+  useEffect(() => {
+    if (!isPending && session?.user) {
+      router.replace(redirectUrl);
+    }
+  }, [session, isPending, router, redirectUrl]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (!formData.email || !formData.password) {
+      toast.error("Please fill in both email and password.");
+      return;
+    }
+
     setLoading(true);
 
     try {
       const { data, error } = await signIn.email({
-        email: formData.email,
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
       });
 
@@ -36,10 +50,10 @@ export default function LoginPage() {
       }
 
       toast.success("Welcome back to PlayPlex!");
-      router.push(redirectUrl);
+     
+      window.location.href = redirectUrl;
     } catch (err) {
       toast.error(err.message || "Failed to log in.");
-    } finally {
       setLoading(false);
     }
   };
@@ -54,6 +68,14 @@ export default function LoginPage() {
       toast.error(err.message || "Google login failed.");
     }
   };
+
+  if (isPending) {
+    return (
+      <div className="flex min-h-[calc(100vh-140px)] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-lime-400 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-[calc(100vh-140px)] items-center justify-center px-4 py-12">
@@ -139,5 +161,20 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[calc(100vh-140px)] items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-lime-400 border-t-transparent" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -17,10 +17,11 @@ export default function Navbar() {
   const [darkMode, setDarkMode] = useState(true);
   const dropdownRef = useRef(null);
 
-  // Sync DOM with saved theme on mount without hydration mismatch
+
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const isDark = savedTheme !== "light";
+    // eslint-disable-next-line
     setDarkMode(isDark);
 
     if (isDark) {
@@ -30,7 +31,7 @@ export default function Navbar() {
     }
   }, []);
 
-  // Theme toggle handler
+
   const toggleTheme = () => {
     const nextMode = !darkMode;
     setDarkMode(nextMode);
@@ -44,7 +45,6 @@ export default function Navbar() {
     }
   };
 
-  // Close profile dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -72,7 +72,7 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-zinc-800 bg-zinc-950 text-white">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand Logo */}
+   
         <Link href="/" className="flex items-center gap-3">
           <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-lime-400 text-xl font-black italic text-zinc-950 shadow-lg shadow-lime-400/20">
             P
@@ -87,7 +87,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
+     
         <div className="hidden items-center gap-1 md:flex">
           <Link
             href="/"

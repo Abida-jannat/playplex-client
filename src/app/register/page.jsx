@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { signUp, signIn } from "@/lib/auth-client";
+import { signUp, signIn, signOut } from "@/lib/auth-client"; 
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -44,23 +44,28 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
+      const cleanImage = formData.photoURL?.trim() || undefined;
+
       const { data, error } = await signUp.email({
-        name: formData.name,
-        email: formData.email,
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
-        image: formData.photoURL || undefined,
+        image: cleanImage,
       });
 
       if (error) {
-        throw new Error(error.message || "Failed to register.");
+        throw new Error(error.message || "Failed to register account.");
       }
 
-      toast.success("Account created successfully! Redirecting to login...");
-      setTimeout(() => {
-        router.push("/login");
-      }, 1200);
+    
+      await signOut();
+
+      toast.success("Account created successfully! Please log in.");
+      
+     
+      router.push("/login");
     } catch (err) {
-      toast.error(err.message || "Something went wrong.");
+      toast.error(err.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -124,7 +129,7 @@ export default function RegisterPage() {
               required
               value={formData.name}
               onChange={handleChange}
-              placeholder="e.g. Tanvir Hossain"
+              placeholder="name "
               className="mt-1.5 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-xs text-white placeholder-zinc-600 focus:border-lime-400 focus:outline-none focus:ring-1 focus:ring-lime-400"
             />
           </div>
