@@ -6,6 +6,18 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 
+
+const getAuthToken = async () => {
+  try {
+    const res = await fetch("/api/get-token");
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.token;
+  } catch {
+    return null;
+  }
+};
+
 export default function MyBookingsPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
@@ -27,8 +39,18 @@ export default function MyBookingsPage() {
     if (!session?.user?.email) return;
     setLoading(true);
     try {
+      const token = await getAuthToken();
+
       const res = await fetch(
-        `http://localhost:5000/api/my-bookings?email=${encodeURIComponent(session.user.email)}`
+        `http://localhost:5000/api/my-bookings?email=${encodeURIComponent(session.user.email)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          credentials: "include", // Added: passes HTTPOnly JWT cookie
+        }
       );
       if (res.ok) {
         const data = await res.json();
@@ -42,8 +64,8 @@ export default function MyBookingsPage() {
   };
 
   useEffect(() => {
-      if (session?.user?.email) {
-            // eslint-disable-next-line
+    if (session?.user?.email) {
+      // eslint-disable-next-line
       loadBookings();
     }
   }, [session?.user?.email]);
@@ -52,11 +74,20 @@ export default function MyBookingsPage() {
     if (!cancelTargetId) return;
     setCancelling(true);
     try {
+      const token = await getAuthToken();
+
       const res = await fetch(
         `http://localhost:5000/api/bookings/${cancelTargetId}?email=${encodeURIComponent(
           session.user.email
         )}`,
-        { method: "DELETE" }
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          credentials: "include", // Added: passes HTTPOnly JWT cookie
+        }
       );
 
       const data = await res.json();

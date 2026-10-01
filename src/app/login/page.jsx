@@ -18,7 +18,6 @@ function LoginForm() {
     password: "",
   });
 
-
   useEffect(() => {
     if (!isPending && session?.user) {
       router.replace(redirectUrl);
@@ -40,14 +39,24 @@ function LoginForm() {
     setLoading(true);
 
     try {
+      const emailValue = formData.email.trim().toLowerCase();
+
       const { data, error } = await signIn.email({
-        email: formData.email.trim().toLowerCase(),
+        email: emailValue,
         password: formData.password,
       });
 
       if (error) {
         throw new Error(error.message || "Invalid email or password.");
       }
+
+      await fetch("http://localhost:5000/api/auth/set-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", 
+        body: JSON.stringify({ email: emailValue }),
+      });
+  
 
       toast.success("Welcome back to PlayPlex!");
      
@@ -163,7 +172,6 @@ function LoginForm() {
     </div>
   );
 }
-
 
 export default function LoginPage() {
   return (

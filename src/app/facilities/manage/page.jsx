@@ -6,6 +6,18 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 
+
+const getAuthToken = async () => {
+  try {
+    const res = await fetch("/api/get-token");
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.token;
+  } catch {
+    return null;
+  }
+};
+
 export default function ManageFacilitiesPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
@@ -29,8 +41,18 @@ export default function ManageFacilitiesPage() {
     if (!session?.user?.email) return;
     setLoading(true);
     try {
+      const token = await getAuthToken();
+
       const res = await fetch(
-        `http://localhost:5000/api/my-facilities?email=${encodeURIComponent(session.user.email)}`
+        `http://localhost:5000/api/my-facilities?email=${encodeURIComponent(session.user.email)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          credentials: "include", // Added: passes HTTPOnly JWT cookie
+        }
       );
       if (res.ok) {
         const data = await res.json();
@@ -44,8 +66,8 @@ export default function ManageFacilitiesPage() {
   };
 
   useEffect(() => {
-      if (session?.user?.email) {
-         // eslint-disable-next-line
+    if (session?.user?.email) {
+      // eslint-disable-next-line
       loadFacilities();
     }
   }, [session?.user?.email]);
@@ -54,9 +76,15 @@ export default function ManageFacilitiesPage() {
     e.preventDefault();
     setActionLoading(true);
     try {
+      const token = await getAuthToken();
+
       const res = await fetch(`http://localhost:5000/api/facilities/${editingFacility._id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        credentials: "include", // Added: passes HTTPOnly JWT cookie
         body: JSON.stringify({
           ownerEmail: session.user.email,
           name: editingFacility.name,
@@ -88,11 +116,20 @@ export default function ManageFacilitiesPage() {
     if (!deleteTargetId) return;
     setActionLoading(true);
     try {
+      const token = await getAuthToken();
+
       const res = await fetch(
         `http://localhost:5000/api/facilities/${deleteTargetId}?email=${encodeURIComponent(
           session.user.email
         )}`,
-        { method: "DELETE" }
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          credentials: "include", // Added: passes HTTPOnly JWT cookie
+        }
       );
 
       const data = await res.json();
