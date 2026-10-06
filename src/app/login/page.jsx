@@ -50,13 +50,12 @@ function LoginForm() {
         throw new Error(error.message || "Invalid email or password.");
       }
 
-      await fetch("http://localhost:5000/api/auth/set-token", {
+      await fetch("/api/set-token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", 
         body: JSON.stringify({ email: emailValue }),
       });
-  
 
       toast.success("Welcome back to PlayPlex!");
      

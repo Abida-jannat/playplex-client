@@ -6,6 +6,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 
+// Read API URL from environment variable for Vercel, fallback to localhost
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const getAuthToken = async () => {
   try {
@@ -44,7 +46,7 @@ export default function ManageFacilitiesPage() {
       const token = await getAuthToken();
 
       const res = await fetch(
-        `http://localhost:5000/api/my-facilities?email=${encodeURIComponent(session.user.email)}`,
+        `${API_URL}/api/my-facilities?email=${encodeURIComponent(session.user.email)}`,
         {
           method: "GET",
           headers: {
@@ -78,7 +80,7 @@ export default function ManageFacilitiesPage() {
     try {
       const token = await getAuthToken();
 
-      const res = await fetch(`http://localhost:5000/api/facilities/${editingFacility._id}`, {
+      const res = await fetch(`${API_URL}/api/facilities/${editingFacility._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -119,7 +121,7 @@ export default function ManageFacilitiesPage() {
       const token = await getAuthToken();
 
       const res = await fetch(
-        `http://localhost:5000/api/facilities/${deleteTargetId}?email=${encodeURIComponent(
+        `${API_URL}/api/facilities/${deleteTargetId}?email=${encodeURIComponent(
           session.user.email
         )}`,
         {

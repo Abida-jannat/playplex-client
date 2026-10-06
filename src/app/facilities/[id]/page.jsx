@@ -6,6 +6,21 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+
+const getAuthToken = async () => {
+  try {
+    const res = await fetch("/api/get-token");
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.token;
+  } catch {
+    return null;
+  }
+};
+
 const categoryFallbacks = {
   Football: "https://images.unsplash.com/photo-1529900245534-47fbf8204b61?auto=format&fit=crop&q=80&w=800",
   Badminton: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&q=80&w=800",
@@ -32,7 +47,7 @@ export default function FacilityDetailsPage({ params }) {
   const [timeSlot, setTimeSlot] = useState("");
   const [hours, setHours] = useState(1);
 
-  // 1. Private Route Protection
+
   useEffect(() => {
     if (!isPending && !session?.user) {
       toast.error("Please login to view facility details and book.");
@@ -40,11 +55,11 @@ export default function FacilityDetailsPage({ params }) {
     }
   }, [session, isPending, router, id]);
 
-  // 2. Fetch Facility Details
+ 
   useEffect(() => {
     async function fetchFacility() {
       try {
-        const res = await fetch(`http://localhost:5000/api/facilities/${id}`);
+        const res = await fetch(`${API_URL}/api/facilities/${id}`);
         if (res.ok) {
           const data = await res.json();
           setFacility(data);
@@ -83,6 +98,7 @@ export default function FacilityDetailsPage({ params }) {
     setBookingLoading(true);
 
     try {
+      const token = await getAuthToken();
       const totalPrice = Number(facility.pricePerHour) * Number(hours);
 
       const bookingPayload = {
@@ -97,9 +113,13 @@ export default function FacilityDetailsPage({ params }) {
         totalPrice,
       };
 
-      const res = await fetch("http://localhost:5000/api/bookings", {
+      const res = await fetch(`${API_URL}/api/bookings`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        credentials: "include",
         body: JSON.stringify(bookingPayload),
       });
 

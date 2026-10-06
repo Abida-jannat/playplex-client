@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 
+// Read API URL from environment variable for Vercel, fallback to localhost
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
 const categories = [
   "All",
   "Football",
@@ -39,7 +42,7 @@ export default function FacilitiesPage() {
     async function fetchFacilities() {
       setLoading(true);
       try {
-        let url = "http://localhost:5000/api/facilities";
+        let url = `${API_URL}/api/facilities`;
         const params = new URLSearchParams();
 
         if (selectedCategory && selectedCategory !== "All") {

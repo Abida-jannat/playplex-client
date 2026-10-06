@@ -6,6 +6,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 
+// Read API URL from environment variable for Vercel, fallback to localhost
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const getAuthToken = async () => {
   try {
@@ -42,7 +44,7 @@ export default function MyBookingsPage() {
       const token = await getAuthToken();
 
       const res = await fetch(
-        `http://localhost:5000/api/my-bookings?email=${encodeURIComponent(session.user.email)}`,
+        `${API_URL}/api/my-bookings?email=${encodeURIComponent(session.user.email)}`,
         {
           method: "GET",
           headers: {
@@ -77,7 +79,7 @@ export default function MyBookingsPage() {
       const token = await getAuthToken();
 
       const res = await fetch(
-        `http://localhost:5000/api/bookings/${cancelTargetId}?email=${encodeURIComponent(
+        `${API_URL}/api/bookings/${cancelTargetId}?email=${encodeURIComponent(
           session.user.email
         )}`,
         {

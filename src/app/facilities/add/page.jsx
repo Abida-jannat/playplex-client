@@ -5,6 +5,21 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
+// Read API URL from environment variable for Vercel, fallback to localhost
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+// Helper function to read playplex_token from cookie
+const getAuthToken = async () => {
+  try {
+    const res = await fetch("/api/get-token");
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.token;
+  } catch {
+    return null;
+  }
+};
+
 export default function AddFacilityPage() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
@@ -84,6 +99,8 @@ export default function AddFacilityPage() {
 
     setSubmitting(true);
     try {
+      const token = await getAuthToken();
+
       const payload = {
         name: formData.name,
         category: formData.category,
@@ -96,9 +113,13 @@ export default function AddFacilityPage() {
         ownerEmail: session?.user?.email, 
       };
 
-      const res = await fetch("http://localhost:5000/api/facilities", {
+      const res = await fetch(`${API_URL}/api/facilities`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        credentials: "include",
         body: JSON.stringify(payload),
       });
 
